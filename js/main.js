@@ -6,7 +6,7 @@ var firstOrigami, secondOrigami, thirdOrigami;
 const origamis = [firstOrigami, secondOrigami, thirdOrigami];
 var floor;
 var renderer, scene, camera, camera1, camera2, camera3;
-var FirstRotationVelocity = 0, SecondRotationVelocity = 0, ThirdRotationVelocity = 0;
+var firstRotationVelocity = 0, secondRotationVelocity = 0, thirdRotationVelocity = 0;
 const camFactor = 5;
 
 function init() {
@@ -40,14 +40,14 @@ function animate() {
 function update() {
     'use strict';
     // origami rotation commands
-    if (FirstRotationVelocity) {
-        firstOrigami.rotation.y += FirstRotationVelocity
+    if (firstRotationVelocity) {
+        firstOrigami.rotation.y += firstRotationVelocity
     }
-    if (SecondRotationVelocity) {
-        secondOrigami.rotation.y += SecondRotationVelocity
+    if (secondRotationVelocity) {
+        secondOrigami.rotation.y += secondRotationVelocity
     }
-    if (ThirdRotationVelocity) {
-        thirdOrigami.rotation.y += ThirdRotationVelocity
+    if (thirdRotationVelocity) {
+        thirdOrigami.rotation.y += thirdRotationVelocity
     }
 }
 
@@ -81,22 +81,22 @@ function onKeyDown(e) {
     switch (e.keyCode) {
         // origami rotation
         case 81: // Q
-            FirstRotationVelocity = -0.1;
+            firstRotationVelocity = -0.1;
             break;
         case 87: // W
-            FirstRotationVelocity = 0.1;
+            firstRotationVelocity = 0.1;
             break;
         case 69: // E
-            SecondRotationVelocity = -0.1;
+            secondRotationVelocity = -0.1;
             break;
         case 82: // R
-            SecondRotationVelocity = 0.1;
+            secondRotationVelocity = 0.1;
             break;
         case 84: // T
-            ThirdRotationVelocity = -0.1;
+            thirdRotationVelocity = -0.1;
             break;
         case 89: // Y
-            ThirdRotationVelocity = 0.1;
+            thirdRotationVelocity = 0.1;
             break;
     }
 }
@@ -107,15 +107,29 @@ function onKeyUp(e) {
         // origami rotation 
         case 81: // Q
         case 87: // W
-            FirstRotationVelocity = 0;
+            firstRotationVelocity = 0;
             break;
         case 69: // E
         case 82: // R
-            SecondRotationVelocity = 0;
+            secondRotationVelocity = 0;
             break;
         case 84: // T
         case 89: // Y
-            ThirdRotationVelocity = 0;
+            thirdRotationVelocity = 0;
+            break;
+
+        case 65: // A
+            break;
+        case 83: // S
+            break;
+
+        case 68: // D
+            break;
+        case 90: // Z
+            break;
+        case 88: // X
+            break;
+        case 67: // C
             break;
     }
 }
