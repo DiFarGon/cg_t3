@@ -3,10 +3,11 @@
 var dullMaterial, brightMaterial, basicMaterial;
 var dullMaterialWhiter, brightMaterialWhiter, basicMaterialWhiter;
 var firstOrigami, secondOrigami, thirdOrigami;
-const origamis = [firstOrigami, secondOrigami, thirdOrigami];
+const origamis = [];
 var floor;
 var renderer, scene, camera, camera1, camera2, camera3;
 var firstRotationVelocity = 0, secondRotationVelocity = 0, thirdRotationVelocity = 0;
+var shading = true, shadingPhong = true, materialChange = false;
 const camFactor = 5;
 
 function init() {
@@ -39,6 +40,7 @@ function animate() {
 
 function update() {
     'use strict';
+
     // origami rotation commands
     if (firstRotationVelocity) {
         firstOrigami.rotation.y += firstRotationVelocity
@@ -48,6 +50,31 @@ function update() {
     }
     if (thirdRotationVelocity) {
         thirdOrigami.rotation.y += thirdRotationVelocity
+    }
+
+    if (materialChange) {
+        if (shading) {
+            if (shadingPhong) {
+                origamis.forEach(function(origami) {
+                    origami.children.forEach(function(mesh) {
+                        mesh.material = brightMaterial;
+                    });
+                })
+            } else {
+                origamis.forEach(function(origami) {
+                    origami.children.forEach(function(mesh) {
+                        mesh.material = dullMaterial;
+                    });
+                });
+            }
+        } else {
+            origamis.forEach(function(origami) {
+                origami.children.forEach(function(mesh) {
+                    mesh.material = basicMaterial;
+                });
+            });
+        }
+        materialChange = false;
     }
 }
 
@@ -119,8 +146,12 @@ function onKeyUp(e) {
             break;
 
         case 65: // A
+            materialChange = true;
+            shadingPhong = !shadingPhong;
             break;
         case 83: // S
+            materialChange = true;
+            shading = !shading;
             break;
 
         case 68: // D
@@ -149,6 +180,7 @@ function createScene() {
     createMaterials();
     createOrigamis();
     createFloor();
+    createLights();
 
 }
 
@@ -260,6 +292,7 @@ function createThirdOrigami() {
 
     scene.add(thirdOrigami);
     thirdOrigami.position.set(150, 50, 0);
+    origamis.push(thirdOrigami);
 }
 
 function createSecondOrigami() {
@@ -321,6 +354,7 @@ function createSecondOrigami() {
 
     scene.add(secondOrigami);
     secondOrigami.position.set(0, 70, 0);
+    origamis.push(secondOrigami);
 }
 
 function createFirstOrigami() {
@@ -354,6 +388,7 @@ function createFirstOrigami() {
 
     scene.add(firstOrigami);
     firstOrigami.position.set(-150, 60, 0);
+    origamis.push(firstOrigami);
 }
 
 function createFloor() {
@@ -381,8 +416,42 @@ function addStep(obj, stepSize, stepDistance) {
     obj.add(mesh);
     mesh.position.z = stepDistance;
     mesh.position.y = - stepDistance / 2;
-
 } 
+
+function createLights() {
+    'use strict';
+
+    var spotlight1 = createSpotlight();
+    scene.add(spotlight1);
+    spotlight1.position.set(firstOrigami.position.x, 160, -20);
+    spotlight1.lookAt(firstOrigami.position);
+    spotlight1.add(new THREE.AxesHelper(100));
+}
+
+function createSpotlight() {
+    'use strict';
+
+    var spotlight = new THREE.Object3D();
+
+    const sphereGeometry = new THREE.SphereGeometry(4);
+    const sphereMesh = new THREE.Mesh(sphereGeometry, basicMaterial);
+
+    const coneGeometry = new THREE.ConeGeometry(4, 4);
+    const coneMesh = new THREE.Mesh(coneGeometry, basicMaterial);
+
+    spotlight.add(sphereMesh);
+    spotlight.add(coneMesh);
+
+    coneMesh.rotation.z = - Math.PI / 2;
+    coneMesh.position.x = - 4;
+
+    var light = new THREE.SpotLight();
+
+    spotlight.add(light);
+    light.position.x = - 4;
+
+    return spotlight;
+}
 
 function createCameras() {
     'use strict';
