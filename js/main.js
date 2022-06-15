@@ -6,6 +6,7 @@ var firstOrigami, secondOrigami, thirdOrigami;
 const origamis = [firstOrigami, secondOrigami, thirdOrigami];
 var floor;
 var renderer, scene, camera, camera1, camera2, camera3;
+var FirstRotationVelocity = 0, SecondRotationVelocity = 0, ThirdRotationVelocity = 0;
 const camFactor = 5;
 
 function init() {
@@ -38,6 +39,16 @@ function animate() {
 
 function update() {
     'use strict';
+    // origami rotation commands
+    if (FirstRotationVelocity) {
+        firstOrigami.rotation.y += FirstRotationVelocity
+    }
+    if (SecondRotationVelocity) {
+        secondOrigami.rotation.y += SecondRotationVelocity
+    }
+    if (ThirdRotationVelocity) {
+        thirdOrigami.rotation.y += ThirdRotationVelocity
+    }
 }
 
 function render() {
@@ -65,12 +76,48 @@ function onResize() {
     }
 }
 
-function onKeyUp(e) {
-    'use strict';
-}
-
 function onKeyDown(e) {
     'use strict';
+    switch (e.keyCode) {
+        // origami rotation
+        case 81: // Q
+            FirstRotationVelocity = -0.1;
+            break;
+        case 87: // W
+            FirstRotationVelocity = 0.1;
+            break;
+        case 69: // E
+            SecondRotationVelocity = -0.1;
+            break;
+        case 82: // R
+            SecondRotationVelocity = 0.1;
+            break;
+        case 84: // T
+            ThirdRotationVelocity = -0.1;
+            break;
+        case 89: // Y
+            ThirdRotationVelocity = 0.1;
+            break;
+    }
+}
+
+function onKeyUp(e) {
+    'use strict';
+    switch (e.keyCode) {
+        // origami rotation 
+        case 81: // Q
+        case 87: // W
+            FirstRotationVelocity = 0;
+            break;
+        case 69: // E
+        case 82: // R
+            SecondRotationVelocity = 0;
+            break;
+        case 84: // T
+        case 89: // Y
+            ThirdRotationVelocity = 0;
+            break;
+    }
 }
 
 function createScene() {
