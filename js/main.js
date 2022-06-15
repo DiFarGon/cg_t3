@@ -131,6 +131,13 @@ function onKeyUp(e) {
             break;
         case 67: // C
             break;
+
+        case 49: // 1
+            camera = camera1;
+            break;
+        case 50: // 2
+            camera = camera2;
+            break;
     }
 }
 
@@ -313,7 +320,7 @@ function createSecondOrigami() {
     secondOrigami.add(mesh);
 
     scene.add(secondOrigami);
-    secondOrigami.position.set(50, 50, 0);
+    secondOrigami.position.set(0, 70, 0);
 }
 
 function createFirstOrigami() {
@@ -346,7 +353,7 @@ function createFirstOrigami() {
     firstOrigami.add(mesh);
 
     scene.add(firstOrigami);
-    firstOrigami.position.set(-100, 50, 0);
+    firstOrigami.position.set(-150, 60, 0);
 }
 
 function createFloor() {
