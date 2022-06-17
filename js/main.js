@@ -2,12 +2,12 @@
 
 var lambertOrigami, phongOrigami, basicOrigami;
 var lambertOrigamiWhiter, phongOrigamiWhiter, basicOrigamiWhiter;
-var floorMaterial, spotlightMaterial;
+var stageMaterial, spotlightMaterial, floorMaterial;
 var firstOrigami, secondOrigami, thirdOrigami;
 var spotlight1, spotlight2, spotlight3, directionalLight;
-var directionalLightOn = false, spotlight1On = false, spotlight2On = false, spotlight3On = false;
+var directionalLightOn = true, spotlight1On = false, spotlight2On = false, spotlight3On = false;
 const origamis = [];
-var floor;
+var stage, floor;
 var renderer, scene, camera, camera1, camera2, camera3;
 var firstRotationVelocity = 0, secondRotationVelocity = 0, thirdRotationVelocity = 0;
 var shading = true, shadingPhong = true, materialChange = false;
@@ -22,7 +22,7 @@ function init() {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000);
-    renderer.shadowMapEnabled = true;
+    renderer.shadowMap.enabled = true;
     document.body.appendChild(renderer.domElement);
 
     createScene();
@@ -88,7 +88,7 @@ function update() {
                 origami => origami.children.forEach(
                     mesh => mesh.material.wireframe = true)
             );
-            floor.children.forEach(
+            stage.children.forEach(
                 mesh => mesh.wireframe = true
             );
         } else {
@@ -96,7 +96,7 @@ function update() {
                 origami => origami.children.forEach(
                     mesh => mesh.material.wireframe = false)
             );
-            floor.children.forEach(
+            stage.children.forEach(
                 mesh => mesh.wireframe = false
             );
         }
@@ -235,6 +235,7 @@ function createScene() {
     createMaterials();
     createOrigamis();
     createFloor();
+    createStage();
     createLights();
 }
 
@@ -243,7 +244,7 @@ function createCameras() {
 
     camera1 = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
     scene.add(camera1);
-    camera1.position.set(0, 300, 500);
+    camera1.position.set(0, 50, 500);
     camera1.lookAt(scene.position);
     
 

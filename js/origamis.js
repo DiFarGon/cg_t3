@@ -94,7 +94,7 @@ function createThirdOrigami() {
     thirdOrigami.receiveShadow = true;
 
     scene.add(thirdOrigami);
-    thirdOrigami.position.set(150, 50, 0);
+    thirdOrigami.position.set(150, 80, 0);
     origamis.push(thirdOrigami);
 }
 
@@ -159,7 +159,7 @@ function createSecondOrigami() {
     secondOrigami.receiveShadow = true;
 
     scene.add(secondOrigami);
-    secondOrigami.position.set(0, 70, 0);
+    secondOrigami.position.set(0, 90, 0);
     origamis.push(secondOrigami);
 }
 
@@ -203,38 +203,59 @@ function createFirstOrigami() {
     firstOrigami.receiveShadow = true;
 
     scene.add(firstOrigami);
-    firstOrigami.position.set(-150, 60, 0);
+    firstOrigami.position.set(-150, 90, 0);
     origamis.push(firstOrigami);
+}
+
+function createStage() {
+    'use strict';
+
+    stage = new THREE.Object3D();
+    
+    const x = 500;
+    const y = 30;
+    const z = 300;
+    const stepHeight = y / 3;
+    const stepWidth = 20;
+    const stepLength = 50;
+    
+    const geometry = new THREE.BoxGeometry(x, y, z);
+    const mesh = new THREE.Mesh(geometry, stageMaterial);
+
+    stage.add(mesh);
+
+    addStep(stage, - (y / 6), stepLength, (2 * stepHeight), stepWidth, (z / 2) + (stepHeight / 2));
+    addStep(stage, - (y / 3), stepLength, stepHeight, stepWidth, (z / 2) + stepHeight + (stepHeight / 2));
+
+    stage.castShadow = true;
+    stage.receiveShadow = true;
+
+    scene.add(stage);
+    stage.position.y = y / 2;
+}
+
+function addStep(obj, stepCenter, stepLength, stepHeight, stepWidth, stepDistance) {
+    'use strict';
+
+    const geometry = new THREE.BoxGeometry(stepLength, stepHeight, stepWidth);
+    const mesh = new THREE.Mesh(geometry, stageMaterial);
+
+    obj.add(mesh);
+    mesh.position.z = stepDistance;
+    mesh.position.y = stepCenter;
 }
 
 function createFloor() {
     'use strict';
 
     floor = new THREE.Object3D();
-    
-    const geometry = new THREE.BoxGeometry(500, 15, 100);
+
+    const geometry = new THREE.PlaneGeometry(10000, 10000);
     const mesh = new THREE.Mesh(geometry, floorMaterial);
 
     floor.add(mesh);
-
-    addStep(floor, 10, 40);
-    addStep(floor, 5, 62.5);
-
-    floor.castShadow = true;
-    floor.receiveShadow = true;
-
     scene.add(floor);
-}
-
-function addStep(obj, stepSize, stepDistance) {
-    'use strict';
-
-    const geometry = new THREE.BoxGeometry(100, stepSize, 10);
-    const mesh = new THREE.Mesh(geometry, floorMaterial);
-
-    obj.add(mesh);
-    mesh.position.z = stepDistance;
-    mesh.position.y = - stepDistance / 2;
+    floor.rotation.x = Math.PI / 2;
 }
 
 function createMaterials() {
@@ -242,49 +263,72 @@ function createMaterials() {
 
     const loader = new THREE.TextureLoader();
     const origamiTexture = loader.load('../textures/red-origami.jpeg');
-    const floorTexture = loader.load('../textures/floor.jpeg');
+    origamiTexture.wrapS = THREE.RepeatWrapping;
+    origamiTexture.wrapT = THREE.RepeatWrapping;
+    origamiTexture.repeat.set(100, 100);
+
+    const stageTexture = loader.load('../textures/stage.jpeg');
     const spotlightTexture = loader.load('../textures/metal.jpeg');
+
+    const floorTexture = loader.load('../textures/floor.jpeg');
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(200, 200);
 
     lambertOrigami = new THREE.MeshLambertMaterial({
         color: 0xe2dfd2,
         map: origamiTexture,
-        wireframe: false
+        wireframe: false,
+        side: THREE.DoubleSide
     });
 
     phongOrigami = new THREE.MeshPhongMaterial({
         color: 0xe2dfd2,
         map: origamiTexture,
-        wireframe: false
+        wireframe: false,
+        side: THREE.DoubleSide
     });
     basicOrigami = new THREE.MeshBasicMaterial({
         color: 0xe2dfd2,
         map: origamiTexture,
-        wireframe: false
+        wireframe: false,
+        side: THREE.DoubleSide
     });
 
     lambertOrigamiWhiter = new THREE.MeshLambertMaterial({
         map: origamiTexture,
-        wireframe: false
+        wireframe: false,
+        side: THREE.DoubleSide
     });
 
     phongOrigamiWhiter = new THREE.MeshPhongMaterial({
         map: origamiTexture,
-        wireframe: false
+        wireframe: false,
+        side: THREE.DoubleSide
     });
 
     basicOrigamiWhiter = new THREE.MeshBasicMaterial({
         map: origamiTexture,
-        wireframe: false
+        wireframe: false,
+        side: THREE.DoubleSide
     });
 
-    floorMaterial = new THREE.MeshPhongMaterial({
-        map: floorTexture,
-        wireframe: false
+    stageMaterial = new THREE.MeshPhongMaterial({
+        map: stageTexture,
+        wireframe: false,
+        side: THREE.DoubleSide
     });
 
     spotlightMaterial = new THREE.MeshPhongMaterial({
         map: spotlightTexture,
         wireframe: false,
+        side: THREE.DoubleSide
+    });
+
+    floorMaterial = new THREE.MeshPhongMaterial({
+        map: floorTexture,
+        wireframe: false,
+        side: THREE.DoubleSide
     });
 }
 
@@ -312,10 +356,11 @@ function createLights() {
     spotlight3.castShadow = true;
     spotlight3.shadowDarkness = 1;
     scene.add(spotlight3);
-    spotlight3.position.set(thirdOrigami.position.x + 10, 160, 40);
+    spotlight3.position.set(thirdOrigami.position.x, 160, 40);
     spotlight3.lookAt(thirdOrigami.position);
 
     directionalLight = new THREE.DirectionalLight();
+    directionalLight.position.set(0, 500, 500);
     directionalLight.castShadow = true;
     directionalLight.shadowDarkness = 1;
     scene.add(directionalLight); 
