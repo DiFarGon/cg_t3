@@ -170,20 +170,29 @@ function createFirstOrigami() {
 
     const geometry = new THREE.BufferGeometry();
 
-    const A = (25, 25, 0);
-    const _A = (-25, -25, 0);
-    const B = (0, 25, 0);
-    const _B = (0, -25, 0);
+    const A = (-25, -25, -1);
+    const _A = (25, -25, -1);
+    const B = (-25, 25, -1);
+    const _B = (25, 25, -1);
+    const C = (0, -25, 1);
+    const D = (0, 25, 1);
 
     const vertices = new Float32Array([
-        25, 25, 0,        // A
-        -25, -25, 0,       // _A
-        0, 25, 0,       // B
+        -25, -25, -1,   // A
+        -25, 25, -1,    // B
+        0, -25, 1,      // C
 
-        
-        0, -25, 0,       // _B
-        25, 25, 0,        // A
-        -25, -25, 0,       // _A
+        -25, 25, -1,    // B
+        0, -25, 1,      // C
+        0, 25, 1,       // D
+
+        25, -25, -1,    // _A
+        25, 25, -1,     // _B
+        0, -25, 1,      // C
+
+        25, 25, -1,     // _B
+        0, -25, 1,      // C
+        0, 25, 1,       // D
     ])
     geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     geometry.computeVertexNormals();
