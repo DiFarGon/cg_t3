@@ -74,9 +74,9 @@ function createThirdOrigami() {
     geometry.computeVertexNormals();
     
     const mesh = new THREE.Mesh(geometry, phongOrigami);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     thirdOrigami.add(mesh);
-    thirdOrigami.castShadow = true;
-    thirdOrigami.receiveShadow = true;
 
     scene.add(thirdOrigami);
     thirdOrigami.position.set(150, 75, 0);
@@ -129,9 +129,9 @@ function createSecondOrigami() {
     geometry.computeVertexNormals();
     
     const mesh = new THREE.Mesh(geometry, phongOrigami);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     secondOrigami.add(mesh);
-    secondOrigami.castShadow = true;
-    secondOrigami.receiveShadow = true;
 
     scene.add(secondOrigami);
     secondOrigami.position.set(0, 90, 0);
@@ -159,9 +159,9 @@ function createFirstOrigami() {
     geometry.computeVertexNormals();
     
     const mesh = new THREE.Mesh(geometry, phongOrigami);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     firstOrigami.add(mesh);
-    firstOrigami.castShadow = true;
-    firstOrigami.receiveShadow = true;
 
     scene.add(firstOrigami);
     firstOrigami.position.set(-150, 90, 0);
@@ -183,13 +183,12 @@ function createStage() {
     const geometry = new THREE.BoxGeometry(x, y, z);
     const mesh = new THREE.Mesh(geometry, phongStage);
 
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     stage.add(mesh);
 
     addStep(stage, - (y / 6), stepLength, (2 * stepHeight), stepWidth, (z / 2) + (stepHeight / 2));
     addStep(stage, - (y / 3), stepLength, stepHeight, stepWidth, (z / 2) + stepHeight + (stepHeight / 2));
-
-    stage.castShadow = true;
-    stage.receiveShadow = true;
 
     scene.add(stage);
     stage.position.y = y / 2;
@@ -204,6 +203,7 @@ function addStep(obj, stepCenter, stepLength, stepHeight, stepWidth, stepDistanc
     obj.add(mesh);
     mesh.position.z = stepDistance;
     mesh.position.y = stepCenter;
+    mesh.receiveShadow = true;
 }
 
 function createFloor() {
@@ -213,7 +213,8 @@ function createFloor() {
 
     const geometry = new THREE.PlaneGeometry(10000, 10000);
     const mesh = new THREE.Mesh(geometry, floorMaterial);
-
+    mesh.receiveShadow = true;
+    
     floor.add(mesh);
     scene.add(floor);
     floor.rotation.x = Math.PI / 2;

@@ -26,7 +26,10 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000);
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.xr.enabled = true;
     document.body.appendChild(renderer.domElement);
+    document.body.appendChild(VRButton.createButton(renderer));
 
     createScene();
     createPauseScene();
@@ -44,7 +47,7 @@ function animate() {
 
     render();
 
-    requestAnimationFrame(animate);
+    renderer.setAnimationLoop(animate);
 }
 
 function update() {
@@ -59,6 +62,7 @@ function update() {
             spotlight1On = false;
             spotlight2On = false;
             spotlight3On = false;
+            reset = false;
         }
         return;
     }
@@ -148,6 +152,7 @@ function update() {
     } else {
         scene.remove(spotlight3);
     }
+
 }
 
 function render() {
@@ -209,6 +214,21 @@ function onKeyDown(e) {
 
 function onKeyUp(e) {
     'use strict';
+
+    switch (e.keyCode) {
+        case 51: // 3
+            if(ispause)
+                reset = true;
+            break;
+        case 32: // space
+            ispause = !ispause;
+            break;
+    }
+
+    if (ispause) {
+        return;
+    }
+
     switch (e.keyCode) {
         // origami rotation 
         case 81: // Q
@@ -247,24 +267,15 @@ function onKeyUp(e) {
             break;
 
         case 49: // 1
-            if(!ispause)
-                camera = camera1;
+            camera = camera1;
             break;
         case 50: // 2
-            if(!ispause)
-                camera = camera2;
+            camera = camera2;
             break;
 
         case 52: // 4
             wireframe = !wireframe;
             wireframeChanged = true;
-            break;
-
-        case 51: // 3
-            reset = true;
-            break;
-        case 32: // space
-            ispause = !ispause;
             break;
     }
 }
@@ -294,7 +305,7 @@ function createCameras() {
 
     camera1 = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
     scene.add(camera1);
-    camera1.position.set(0, 50, 500);
+    camera1.position.set(0, 100, 500);
     camera1.lookAt(scene.position);
     
 
@@ -305,7 +316,14 @@ function createCameras() {
     -10, 1000);
     camera2.updateProjectionMatrix();
 
-    // camera3 = new THREE.StereoCamera()
+    camera3 = new THREE.StereoCamera();
+    var left = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+    left.position.set(-5, 100, 500);
+    left.lookAt(scene.position);
+    var right = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+    right.position.set(5, 100, 500);
+    right.lookAt(scene.position);
+    camera3.right = right;
 
     pauseCamera = new THREE.OrthographicCamera(- window.innerWidth / camFactor,
     window.innerWidth / camFactor,
