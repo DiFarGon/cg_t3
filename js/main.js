@@ -2,7 +2,8 @@
 
 var lambertOrigami, phongOrigami, basicOrigami;
 var lambertOrigamiWhiter, phongOrigamiWhiter, basicOrigamiWhiter;
-var stageMaterial, spotlightMaterial, floorMaterial;
+var lambertStage, phongStage, basicStage;
+var spotlightMaterial, floorMaterial;
 var firstOrigami, secondOrigami, thirdOrigami;
 var spotlight1, spotlight2, spotlight3, directionalLight;
 var directionalLightOn = true, spotlight1On = false, spotlight2On = false, spotlight3On = false;
@@ -13,6 +14,8 @@ var firstRotationVelocity = 0, secondRotationVelocity = 0, thirdRotationVelocity
 var shading = true, shadingPhong = true, materialChange = false;
 const camFactor = 5;
 var wireframeChanged = false, wireframe = false;
+var ispause = false, reset = false;
+var pauseScene, pauseCamera;
 
 function init() {
     'use strict';
@@ -26,6 +29,7 @@ function init() {
     document.body.appendChild(renderer.domElement);
 
     createScene();
+    createPauseScene();
     createCameras();
 
     window.addEventListener("resize", onResize);
@@ -46,6 +50,19 @@ function animate() {
 function update() {
     'use strict';
 
+    if (ispause) {
+        if (reset) {
+            firstOrigami.rotation.y = 0;
+            secondOrigami.rotation.y = 0;
+            thirdOrigami.rotation.y = 0;
+            directionalLightOn = true;
+            spotlight1On = false;
+            spotlight2On = false;
+            spotlight3On = false;
+        }
+        return;
+    }
+
     // origami rotation commands
     if (firstRotationVelocity) {
         firstOrigami.rotation.y += firstRotationVelocity
@@ -61,16 +78,22 @@ function update() {
         if (shading) {
             if (shadingPhong) {
                 origamis.forEach(function(origami) {
-                    origami.children.forEach(function(mesh) {
-                        mesh.material = phongOrigami;
-                    });
-                })
+                    origami.children.forEach(
+                        mesh => mesh.material = phongOrigami
+                    );
+                });
+                stage.children.forEach(
+                    mesh => mesh.phongStage
+                );
             } else {
                 origamis.forEach(function(origami) {
-                    origami.children.forEach(function(mesh) {
-                        mesh.material = lambertOrigami;
-                    });
+                    origami.children.forEach(
+                        mesh => mesh.material = lambertOrigami
+                    );
                 });
+                stage.children.forEach(
+                    mesh => mesh.lambertStage
+                );
             }
         } else {
             origamis.forEach(function(origami) {
@@ -78,6 +101,9 @@ function update() {
                     mesh.material = basicOrigami;
                 });
             });
+            stage.children.forEach(
+                mesh => mesh.basicStage
+            );
         }
         materialChange = false;
     }
@@ -127,7 +153,14 @@ function update() {
 function render() {
     'use strict';
 
+    renderer.autoClear = false;
+    renderer.clear();
     renderer.render(scene, camera);
+
+    if (ispause) {
+        renderer.clearDepth();
+        renderer.render(pauseScene, pauseCamera);
+    }
 }
 
 function onResize() {
@@ -214,15 +247,24 @@ function onKeyUp(e) {
             break;
 
         case 49: // 1
-            camera = camera1;
+            if(!ispause)
+                camera = camera1;
             break;
         case 50: // 2
-            camera = camera2;
+            if(!ispause)
+                camera = camera2;
             break;
 
         case 52: // 4
             wireframe = !wireframe;
             wireframeChanged = true;
+            break;
+
+        case 51: // 3
+            reset = true;
+            break;
+        case 32: // space
+            ispause = !ispause;
             break;
     }
 }
@@ -237,6 +279,14 @@ function createScene() {
     createFloor();
     createStage();
     createLights();
+}
+
+function createPauseScene() {
+    'use strict';
+
+    pauseScene = new THREE.Scene();
+
+    createPauseMessage();
 }
 
 function createCameras() {
@@ -256,6 +306,14 @@ function createCameras() {
     camera2.updateProjectionMatrix();
 
     // camera3 = new THREE.StereoCamera()
+
+    pauseCamera = new THREE.OrthographicCamera(- window.innerWidth / camFactor,
+    window.innerWidth / camFactor,
+    window.innerHeight / camFactor,
+    - window.innerHeight / camFactor,
+    -10, 1000);
+    pauseCamera.updateProjectionMatrix();
+    pauseScene.add(pauseCamera);
 
     camera = camera1;
 }

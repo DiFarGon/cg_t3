@@ -13,21 +13,6 @@ function createThirdOrigami() {
 
     const geometry = new THREE.BufferGeometry();
 
-    const A = (0, 0, -10);
-    const _A = (0, 0, 10);
-    const B = (-13, 21, 0);
-    const C = (29, 0, -2);
-    const _C = (29, 0, 2);
-    const D = (39, 11, 0);
-    const E = (25, 43, -3);
-    const _E = (25, 43, 3);
-    const F = (29, 45, -1);
-    const _F = (29, 45, 1);
-    const G = (45, 37, 0);
-    const H = (8, 17, 0);
-    const I = (14, 0, -6);
-    const _I = (14, 0, 6);
-
     const vertices = new Float32Array([
         0, 0, -10,      // A
         -13, 21, 0,     // B
@@ -94,7 +79,7 @@ function createThirdOrigami() {
     thirdOrigami.receiveShadow = true;
 
     scene.add(thirdOrigami);
-    thirdOrigami.position.set(150, 80, 0);
+    thirdOrigami.position.set(150, 75, 0);
     origamis.push(thirdOrigami);
 }
 
@@ -104,16 +89,6 @@ function createSecondOrigami() {
     secondOrigami = new THREE.Object3D();
 
     const geometry = new THREE.BufferGeometry();
-
-    const A = (0, 28, 0);
-    const B = (12, 15, 0);
-    const _B = (-12, 15, 0);
-    const C = (0, 13, 0);
-    const _C = (0, 13, -3);
-    const D = (10, 10, 3);
-    const _D = (-10, 10, 3);
-    const E = (0, -38, 0);
-    const _E = (0, -38, 0);
 
     const vertices = new Float32Array([
         0, 28, 0,        // A
@@ -170,29 +145,15 @@ function createFirstOrigami() {
 
     const geometry = new THREE.BufferGeometry();
 
-    const A = (-25, -25, -1);
-    const _A = (25, -25, -1);
-    const B = (-25, 25, -1);
-    const _B = (25, 25, -1);
-    const C = (0, -25, 1);
-    const D = (0, 25, 1);
-
     const vertices = new Float32Array([
-        -25, -25, -1,   // A
-        -25, 25, -1,    // B
+        -25, 0, -1,     // A
+        0, 25, 1,       // B
         0, -25, 1,      // C
 
-        -25, 25, -1,    // B
-        0, -25, 1,      // C
-        0, 25, 1,       // D
-
-        25, -25, -1,    // _A
-        25, 25, -1,     // _B
+        25, 0, -1,      // _A
+        0, 25, 1,       // B
         0, -25, 1,      // C
 
-        25, 25, -1,     // _B
-        0, -25, 1,      // C
-        0, 25, 1,       // D
     ])
     geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     geometry.computeVertexNormals();
@@ -220,7 +181,7 @@ function createStage() {
     const stepLength = 50;
     
     const geometry = new THREE.BoxGeometry(x, y, z);
-    const mesh = new THREE.Mesh(geometry, stageMaterial);
+    const mesh = new THREE.Mesh(geometry, phongStage);
 
     stage.add(mesh);
 
@@ -238,7 +199,7 @@ function addStep(obj, stepCenter, stepLength, stepHeight, stepWidth, stepDistanc
     'use strict';
 
     const geometry = new THREE.BoxGeometry(stepLength, stepHeight, stepWidth);
-    const mesh = new THREE.Mesh(geometry, stageMaterial);
+    const mesh = new THREE.Mesh(geometry, phongStage);
 
     obj.add(mesh);
     mesh.position.z = stepDistance;
@@ -296,24 +257,39 @@ function createMaterials() {
     });
 
     lambertOrigamiWhiter = new THREE.MeshLambertMaterial({
+        color: 0xffffff,
         map: origamiTexture,
         wireframe: false,
         side: THREE.DoubleSide
     });
 
     phongOrigamiWhiter = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
         map: origamiTexture,
         wireframe: false,
         side: THREE.DoubleSide
     });
 
     basicOrigamiWhiter = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
         map: origamiTexture,
         wireframe: false,
         side: THREE.DoubleSide
     });
 
-    stageMaterial = new THREE.MeshPhongMaterial({
+    phongStage = new THREE.MeshPhongMaterial({
+        map: stageTexture,
+        wireframe: false,
+        side: THREE.DoubleSide
+    });
+
+    lambertStage = new THREE.MeshLambertMaterial({
+        map: stageTexture,
+        wireframe: false,
+        side: THREE.DoubleSide
+    });
+
+    basicStage = new THREE.MeshBasicMaterial({
         map: stageTexture,
         wireframe: false,
         side: THREE.DoubleSide
@@ -389,4 +365,23 @@ function createSpotlight() {
     light.position.x = - 4;
 
     return spotlight;
+}
+
+function createPauseMessage() {
+    'use strict';
+
+    var pause = new THREE.Object3D();
+
+    const loader = new THREE.TextureLoader();
+    const pauseTexture = loader.load('../textures/pause.jpeg');
+
+    const geometry = new THREE.PlaneGeometry(100, 100);
+    const material = new THREE.MeshBasicMaterial({
+        map: pauseTexture,
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+
+    pause.add(mesh);
+    pauseScene.add(pause);
 }
