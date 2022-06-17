@@ -1,15 +1,18 @@
 // group 23
 
-var dullOrigami, brightOrigami, basicOrigami;
-var dullOrigamiWhiter, brightOrigamiWhiter, basicOrigamiWhiter;
+var lambertOrigami, phongOrigami, basicOrigami;
+var lambertOrigamiWhiter, phongOrigamiWhiter, basicOrigamiWhiter;
+var floorMaterial, spotlightMaterial;
 var firstOrigami, secondOrigami, thirdOrigami;
+var spotlight1, spotlight2, spotlight3, directionalLight;
+var directionalLightOn = false, spotlight1On = false, spotlight2On = false, spotlight3On = false;
 const origamis = [];
 var floor;
 var renderer, scene, camera, camera1, camera2, camera3;
 var firstRotationVelocity = 0, secondRotationVelocity = 0, thirdRotationVelocity = 0;
 var shading = true, shadingPhong = true, materialChange = false;
 const camFactor = 5;
-var wireframeChanged = false, wireframe = true;
+var wireframeChanged = false, wireframe = false;
 
 function init() {
     'use strict';
@@ -19,6 +22,7 @@ function init() {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000);
+    renderer.shadowMapEnabled = true;
     document.body.appendChild(renderer.domElement);
 
     createScene();
@@ -58,13 +62,13 @@ function update() {
             if (shadingPhong) {
                 origamis.forEach(function(origami) {
                     origami.children.forEach(function(mesh) {
-                        mesh.material = brightOrigami;
+                        mesh.material = phongOrigami;
                     });
                 })
             } else {
                 origamis.forEach(function(origami) {
                     origami.children.forEach(function(mesh) {
-                        mesh.material = dullOrigami;
+                        mesh.material = lambertOrigami;
                     });
                 });
             }
@@ -84,12 +88,39 @@ function update() {
                 origami => origami.children.forEach(
                     mesh => mesh.material.wireframe = true)
             );
+            floor.children.forEach(
+                mesh => mesh.wireframe = true
+            );
         } else {
             origamis.forEach(
                 origami => origami.children.forEach(
                     mesh => mesh.material.wireframe = false)
             );
+            floor.children.forEach(
+                mesh => mesh.wireframe = false
+            );
         }
+    }
+
+    if (directionalLightOn) {
+        scene.add(directionalLight);
+    } else {
+        scene.remove(directionalLight);
+    }
+    if (spotlight1On) {
+        scene.add(spotlight1);
+    } else {
+        scene.remove(spotlight1);
+    }
+    if (spotlight2On) {
+        scene.add(spotlight2);
+    } else {
+        scene.remove(spotlight2);
+    }
+    if (spotlight3On) {
+        scene.add(spotlight3);
+    } else {
+        scene.remove(spotlight3);
     }
 }
 
@@ -170,12 +201,16 @@ function onKeyUp(e) {
             break;
 
         case 68: // D
+            directionalLightOn = !directionalLightOn;
             break;
         case 90: // Z
+            spotlight1On = !spotlight1On;
             break;
         case 88: // X
+            spotlight2On = !spotlight2On;
             break;
         case 67: // C
+            spotlight3On = !spotlight3On;
             break;
 
         case 49: // 1
@@ -201,7 +236,6 @@ function createScene() {
     createOrigamis();
     createFloor();
     createLights();
-
 }
 
 function createCameras() {
