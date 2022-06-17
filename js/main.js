@@ -1,7 +1,7 @@
 // group 23
 
-var dullMaterial, brightMaterial, basicMaterial;
-var dullMaterialWhiter, brightMaterialWhiter, basicMaterialWhiter;
+var dullOrigami, brightOrigami, basicOrigami;
+var dullOrigamiWhiter, brightOrigamiWhiter, basicOrigamiWhiter;
 var firstOrigami, secondOrigami, thirdOrigami;
 const origamis = [];
 var floor;
@@ -58,20 +58,20 @@ function update() {
             if (shadingPhong) {
                 origamis.forEach(function(origami) {
                     origami.children.forEach(function(mesh) {
-                        mesh.material = brightMaterial;
+                        mesh.material = brightOrigami;
                     });
                 })
             } else {
                 origamis.forEach(function(origami) {
                     origami.children.forEach(function(mesh) {
-                        mesh.material = dullMaterial;
+                        mesh.material = dullOrigami;
                     });
                 });
             }
         } else {
             origamis.forEach(function(origami) {
                 origami.children.forEach(function(mesh) {
-                    mesh.material = basicMaterial;
+                    mesh.material = basicOrigami;
                 });
             });
         }
@@ -202,88 +202,6 @@ function createScene() {
     createFloor();
     createLights();
 
-}
-
-function createMaterials() {
-    'use strict';
-
-    const texture = new THREE.TextureLoader().load('../textures/origami-texture-red-pr-.jpeg');
-
-    dullMaterial = new THREE.MeshLambertMaterial({
-        map: texture,
-        wireframe: true
-    });
-
-    brightMaterial = new THREE.MeshPhongMaterial({
-        map: texture,
-        wireframe: true
-    });
-    basicMaterial = new THREE.MeshBasicMaterial({
-        map: texture,
-        wireframe: true
-    });
-
-    dullMaterialWhiter = new THREE.MeshLambertMaterial({
-        map: texture,
-        wireframe: true
-    });
-
-    brightMaterialWhiter = new THREE.MeshPhongMaterial({
-        map: texture,
-        wireframe: true
-    });
-
-    basicMaterialWhiter = new THREE.MeshBasicMaterial({
-        map: texture,
-        wireframe: true
-    });
-}
-
-function createLights() {
-    'use strict';
-
-    var spotlight1 = createSpotlight();
-    scene.add(spotlight1);
-    spotlight1.position.set(firstOrigami.position.x, 160, 40);
-    spotlight1.lookAt(firstOrigami.position);
-
-    var spotlight2 = createSpotlight();
-    scene.add(spotlight2);
-    spotlight2.position.set(secondOrigami.position.x, 160, 40);
-    spotlight2.lookAt(secondOrigami.position);
-
-    var spotlight3 = createSpotlight();
-    scene.add(spotlight3);
-    spotlight3.position.set(thirdOrigami.position.x + 10, 160, 40);
-    spotlight3.lookAt(thirdOrigami.position);
-
-    var directionalLight = new THREE.DirectionalLight();
-    scene.add(directionalLight);
-}
-
-function createSpotlight() {
-    'use strict';
-
-    var spotlight = new THREE.Object3D();
-
-    const sphereGeometry = new THREE.SphereGeometry(4);
-    const sphereMesh = new THREE.Mesh(sphereGeometry, basicMaterial);
-
-    const coneGeometry = new THREE.ConeGeometry(4, 4);
-    const coneMesh = new THREE.Mesh(coneGeometry, basicMaterial);
-
-    spotlight.add(sphereMesh);
-    spotlight.add(coneMesh);
-
-    coneMesh.rotation.x = - Math.PI / 2;
-    coneMesh.position.z = 4;
-    
-    var light = new THREE.SpotLight();
-
-    spotlight.add(light);
-    light.position.x = - 4;
-
-    return spotlight;
 }
 
 function createCameras() {
